@@ -2,7 +2,8 @@ package gamemitm
 
 import (
 	"fmt"
-	"gamemitm/cert"
+	"github.com/husanpao/game-mitm/cert"
+
 	"net/http"
 	"os"
 )

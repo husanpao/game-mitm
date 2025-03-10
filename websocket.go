@@ -22,10 +22,10 @@ func (s *Session) SendBinaryToServer(data []byte) {
 	s.Server.WriteMessage(websocket.BinaryMessage, data)
 }
 func (s *Session) SendTextToClient(data []byte) {
-	s.Server.WriteMessage(websocket.TextMessage, data)
+	s.Client.WriteMessage(websocket.TextMessage, data)
 }
 func (s *Session) SendBinaryToClient(data []byte) {
-	s.Server.WriteMessage(websocket.BinaryMessage, data)
+	s.Client.WriteMessage(websocket.BinaryMessage, data)
 }
 
 // handleWebSocket handles WebSocket connections

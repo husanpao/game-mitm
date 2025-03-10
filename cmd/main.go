@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"gamemitm"
 	"gamemitm/gosysproxy"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func init() {
@@ -34,5 +37,16 @@ func main() {
 		return body
 	})
 
-	proxy.Start()
+	// 监听操作系统信号
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
+
+	// 启动代理
+	go proxy.Start()
+
+	// 等待程序终止信号
+	<-signalChan
+	gosysproxy.Off()
+	// 在程序结束时执行清理操作
+
 }

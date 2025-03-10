@@ -1,4 +1,4 @@
-module gamemitm
+module github.com/husanpao/game-mitm
 
 go 1.23.6
 

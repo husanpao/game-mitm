@@ -45,7 +45,7 @@ func (p *ProxyServer) OnRequest(url string) *Dispatcher {
 func (p *ProxyServer) OnResponse(url string) *Dispatcher {
 	d := NewDispatcher(Response, url, p)
 	if p.hasRespHandle {
-		p.logger.Warn("response handle [*] already exists")
+		p.logger.Warn("response handle [*] already exists.")
 		return d
 	}
 	if url == All {

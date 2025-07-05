@@ -73,23 +73,6 @@ type internetProxyInfo struct {
 	lpszProxyBypass *uint16
 }
 
-type ProxyStatus struct {
-	// 代理类型
-	// - 0: INTERNET_OPEN_TYPE_PRECONFIG: use registry configuration
-	// - 1: INTERNET_OPEN_TYPE_DIRECT: 不代理 direct to net
-	// - 3: INTERNET_OPEN_TYPE_PROXY: 使用代理服务器 via named proxy
-	Type  uint32
-	Proxy string // 代理IP地址与端口，IP:Port，例如："127.0.0.1:7890"
-	// 请勿对以下列条目开头的地址使用代理服务器
-	// 注意：
-	// - 这里的地址是ASCII编码
-	// - "<local>" 表示 本地(Intranet)地址，如果包含 "<local>" 则 DisableProxyIntranet 为 true
-	//
-	// 例如：["localhost","127.*"]，
-	Bypass               []string
-	DisableProxyIntranet bool // 请勿将代理服务器用于本地(Intranet)地址
-}
-
 // stringPtrAddr 获取C字符串(UTF16)的数组第一个位置的地址
 func stringPtrAddr(str string) (uint64, error) {
 	scriptLocPtr, err := syscall.UTF16PtrFromString(str)

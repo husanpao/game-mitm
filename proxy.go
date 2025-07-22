@@ -1,11 +1,12 @@
 package gamemitm
 
 import (
+	"context"
 	"fmt"
 	"github.com/husanpao/game-mitm/cert"
-
 	"net/http"
 	"os"
+	"time"
 )
 
 type ProxyServer struct {
@@ -20,6 +21,7 @@ type ProxyServer struct {
 	hasRespHandle      bool
 	connectedHandles   map[string]Handle
 	hasConnectedHandle bool
+	server             *http.Server
 }
 
 func NewProxy() *ProxyServer {
@@ -57,12 +59,32 @@ func (p *ProxyServer) SetCa(ca *cert.CA) {
 }
 
 func (p *ProxyServer) Start() error {
-	server := &http.Server{
+	p.server = &http.Server{
 		Addr:    fmt.Sprintf(":%d", p.port),
 		Handler: http.HandlerFunc(p.handleRequest),
 	}
 	p.logger.Info("Starting proxy server on port %d ", p.port)
-	return server.ListenAndServe()
+	return p.server.ListenAndServe()
+}
+
+// Stop gracefully stops the proxy server with a timeout
+func (p *ProxyServer) Stop() error {
+	if p.server != nil {
+		p.logger.Info("Stopping proxy server on port %d", p.port)
+		// 创建一个带有超时的上下文
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		// 优雅地关闭服务器，等待活跃连接完成
+		err := p.server.Shutdown(ctx)
+		if err != nil {
+			p.logger.Error("Server shutdown error: %v", err)
+			// 如果优雅关闭失败，强制关闭
+			return p.server.Close()
+		}
+		p.logger.Info("Server stopped gracefully")
+	}
+	return nil
 }
 
 func (p *ProxyServer) handleRequest(w http.ResponseWriter, r *http.Request) {
